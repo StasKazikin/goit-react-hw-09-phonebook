@@ -1,9 +1,26 @@
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 import { list, item, button } from './ContactList.module.scss';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { contactsOperations, contactsSelectors } from '../../redux/contacts';
 
-const ContactList = ({ contacts, deleteContact }) => {
+// const mapStateToProps = state => ({
+//   contacts: contactsSelectors.getFilteredContacts(state),
+// });
+
+// const mapDispatchToProps = dispatch => ({
+//   deleteContact: id => dispatch(contactsOperations.deleteContact(id)),
+// });
+
+// export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
+
+export default function ContactList() {
+  const dispatch = useDispatch();
+  const contacts = useSelector(contactsSelectors.getFilteredContacts);
+  const deleteContact = useCallback(
+    id => dispatch(contactsOperations.deleteContact(id)),
+    [dispatch],
+  );
+
   return (
     <ul className={list}>
       {contacts.map(({ name, number, id }) => (
@@ -23,19 +40,4 @@ const ContactList = ({ contacts, deleteContact }) => {
       ))}
     </ul>
   );
-};
-
-ContactList.propTypes = {
-  contacts: PropTypes.array.isRequired,
-  deleteContact: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = state => ({
-  contacts: contactsSelectors.getFilteredContacts(state),
-});
-
-const mapDispatchToProps = dispatch => ({
-  deleteContact: id => dispatch(contactsOperations.deleteContact(id)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
+}
